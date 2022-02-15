@@ -25,14 +25,14 @@ const whiterook=document.getElementById("whiterook")
 const whitepawn=document.getElementById("whitepawn")
 const whitehorse=document.getElementById("whitehorse")
 const whiteking=document.getElementById("whiteking")
-var     whitequeen=document.getElementById("whitequeen")
-var whitebishop=document.getElementById("whitebishop")
+const whitequeen=document.getElementById("whitequeen")
+const whitebishop=document.getElementById("whitebishop")
 
-var blackrook=document.getElementById("blackrook")
-var blackhorse=document.getElementById("blackhorse")
-var blackking=document.getElementById("blackking")
-var blackqueen=document.getElementById("blackqueen")
-var blackbishop=document.getElementById("blackbishop")
+const blackrook=document.getElementById("blackrook")
+const blackhorse=document.getElementById("blackhorse")
+const blackking=document.getElementById("blackking")
+const blackqueen=document.getElementById("blackqueen")
+const blackbishop=document.getElementById("blackbishop")
 
 /*------------------------------------------------------------*/
 /*------------------------------------------------------------*/
@@ -125,6 +125,7 @@ while(!done1 || !done2 || !done3 || !done4){
     else
     if(board.board[i][j].piece.couleur!=this.couleur){
             ctx.fillStyle="#cc1100"
+            piecestoeat.push({i:i, j:j});
             ctx.fillRect(i*80,j*80,80,80);
             board.board[i][j].piece.draw;
             done1=true;
@@ -144,6 +145,8 @@ while(!done1 || !done2 || !done3 || !done4){
         else
         if(board.board[i][k].piece.couleur!=this.couleur && !done2){
             ctx.fillStyle="#cc1100"
+            piecestoeat.push({i:i, j:j});
+
             ctx.fillRect(i*80,k*80,80,80);
             board.board[i][k].piece.draw;
             done2=true;
@@ -165,6 +168,8 @@ while(!done1 || !done2 || !done3 || !done4){
             else
             if(board.board[f][Math.floor(this.y/80)].piece.couleur!=this.couleur){
                     ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:i, j:j});
+
                     ctx.fillRect(f*80,Math.floor(this.y/80)*80,80,80);
                     board.board[f][Math.floor(this.y/80)].piece.draw;
                     done3=true;
@@ -186,6 +191,8 @@ while(!done1 || !done2 || !done3 || !done4){
         else
         if(board.board[c][Math.floor(this.y/80)].piece.couleur!=this.couleur){
                 ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i, j:j});
+
                 ctx.fillRect(c*80,Math.floor(this.y/80)*80,80,80);
                 board.board[c][Math.floor(this.y/80)].piece.draw;
                 done4=true;
@@ -225,14 +232,22 @@ class Pawn extends Piece{
         let piecestoeat=[]
         let i=Math.floor(this.x/80);
         let j=Math.floor(this.y/80);
-        if(board.board[i][j+1].piece==null){
-            availableplaces.push((i,j+1))
+        let k;
+        if(this.couleur=="white"){
+            k=1;
+        }
+        else
+        {
+        k=-1;
+        }
+        if(board.board[i][j+k].piece==null){
+            availableplaces.push((i,j+k))
             ctx.fillStyle="#3CAEA3"
-            ctx.fillRect(i*80,(j+1)*80,80,80)
-            if(!this.moved && board.board[i][j+2].piece==null){
-                availableplaces.push((i,j+2))
+            ctx.fillRect(i*80,(j+k)*80,80,80)
+            if(!this.moved && board.board[i][j+(2*k)].piece==null){
+                availableplaces.push((i,j+(2*k)))
                 ctx.fillStyle="#3CAEA3"
-                ctx.fillRect(i*80,(j+2)*80,80,80)
+                ctx.fillRect(i*80,(j+(2*k))*80,80,80)
             }
         }
     
@@ -248,17 +263,440 @@ class King extends Piece{
     constructor(nom,image,couleur,x,y){
       super(nom,image,couleur,x,y);
     }
+    detectmoves(board){
+        let availableplaces=[null]
+        let piecestoeat=[]
+        let i=Math.floor(this.x/80);
+        let j=Math.floor(this.y/80);
+        if(!i>=8 && !j>=8){
+        if(board.board[i+1][j+1].piece==null ){
+            availableplaces.push({i:i+1,j:j+1});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect((i+1)*80,(j+1)*80,80,80);
+    
+    
+        } else
+        if(board.board[i+1][j+1].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i+1, j:j+1});
+                ctx.fillRect((i+1)*80,(j+1)*80,80,80);
+                board.board[i+1][j+1].piece.draw;
+            }
+    }
+    if(!i<0 && !j<0){
+        if(board.board[i-1][j-1].piece==null ){
+            availableplaces.push({i:i-1,j:j-1});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect((i-1)*80,(j-1)*80,80,80);
+    
+    
+        } else
+        if(board.board[i-1][j-1].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i-1, j:j-1});
+                ctx.fillRect((i-1)*80,(j-1)*80,80,80);
+                board.board[i-1][j-1].piece.draw;
+            }
+    }
+    if(!i<=8 && !j<=8){
+        if(board.board[i+1][j+1].piece==null ){
+            availableplaces.push({i:i,j:j});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(i*80,j*80,80,80);
+    
+    
+        } else
+        if(board.board[i++][j++].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i++, j:j++});
+                ctx.fillRect(i++*80,j++*80,80,80);
+                board.board[i++][j++].piece.draw;
+            }
+    }
+    if(!i<=8 && !j<=8){
+        if(board.board[i+1][j+1].piece==null ){
+            availableplaces.push({i:i,j:j});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(i*80,j*80,80,80);
+    
+    
+        } else
+        if(board.board[i++][j++].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i++, j:j++});
+                ctx.fillRect(i++*80,j++*80,80,80);
+                board.board[i++][j++].piece.draw;
+            }
+    }
+    
+
 }  
+}
 class Queen extends Piece{
     constructor(nom,image,couleur,x,y){
       super(nom,image,couleur,x,y);
     }
+    detectmoves(board){
+
+        let availableplaces=[null]
+        let piecestoeat=[]
+        let i=Math.floor(this.x/80);
+        let j=Math.floor(this.y/80);
+        let k=j;
+        let f=i;
+        let c=i;
+        let done1=false;
+        let done2=false;
+        let done3=false;
+        let done4=false;
+        let done5=false;
+        let done6=false;
+        let done7=false;
+        let done8=false;
+    while(!done1 || !done2 || !done3 || !done4){
+        j=j+1;
+        k=k-1;
+        f=f+1;
+        c=c-1;
+        if(j>=8){
+            done1=true;
+            done5=true;
+            done8=true;
+
+        }
+        if(k<=-1){
+            done2=true;
+            done6=true;
+            done7=true;
+
+        }
+        if(f>=8){
+            done3=true;
+            done5=true;
+            done8=true;
+
+        }
+        if(c<=-1){
+            done4=true;
+            done6=true;
+            done7=true;
+            
+        }
+        if(!done1){
+        if(board.board[i][j].piece==null ){
+            availableplaces.push({i:i,j:j});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(i*80,j*80,80,80);
+    
+    
+        }
+        else
+        if(board.board[i][j].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i, j:j});
+                ctx.fillRect(i*80,j*80,80,80);
+                board.board[i][j].piece.draw;
+                done1=true;
+                console.log(board.board[i][j].piece.couleur)
+            }
+                
+            else{
+              done1=true;
+            }
+        }
+            if(!done2){
+            if(board.board[i][k].piece==null && !done2){
+                availableplaces.push({i:i,j:k});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(i*80,k*80,80,80);
+            }
+            else
+            if(board.board[i][k].piece.couleur!=this.couleur && !done2){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:i, j:j});
+    
+                ctx.fillRect(i*80,k*80,80,80);
+                board.board[i][k].piece.draw;
+                done2=true;
+            }
+     
+           
+            else{
+              done2=true;
+            }
+        }
+        if(!done3){
+                if(board.board[f][Math.floor(this.y/80)].piece==null ){
+                    availableplaces.push({i:f,j:Math.floor(this.y/80)});
+                    ctx.fillStyle="#3CAEA3"
+                    ctx.fillRect(f*80,Math.floor(this.y/80)*80,80,80);
+            
+            
+                }
+                else
+                if(board.board[f][Math.floor(this.y/80)].piece.couleur!=this.couleur){
+                        ctx.fillStyle="#cc1100"
+                        piecestoeat.push({i:i, j:j});
+    
+                        ctx.fillRect(f*80,Math.floor(this.y/80)*80,80,80);
+                        board.board[f][Math.floor(this.y/80)].piece.draw;
+                        done3=true;
+                    }
+                        
+                    else{
+                      done3=true;
+                    }
+                
+        }
+        if(!done4){
+            if(board.board[c][Math.floor(this.y/80)].piece==null ){
+                availableplaces.push({i:c,j:Math.floor(this.y/80)});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(c*80,Math.floor(this.y/80)*80,80,80);
+        
+        
+            }
+            else
+            if(board.board[c][Math.floor(this.y/80)].piece.couleur!=this.couleur){
+                    ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:i, j:j});
+    
+                    ctx.fillRect(c*80,Math.floor(this.y/80)*80,80,80);
+                    board.board[c][Math.floor(this.y/80)].piece.draw;
+                    done4=true;
+                }
+                    
+                else{
+                  done4=true;
+                }
+            
+        }
+        if(!done5){
+            if(board.board[f][j].piece==null ){
+                availableplaces.push({i:f, j:j});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(f*80,j*80,80,80);
+        
+        
+            }
+            else
+            if(board.board[f][j].piece.couleur!=this.couleur){
+                    ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:f, j:j});
+    
+                    ctx.fillRect(f*80,j*80,80,80);
+                    board.board[f][j].piece.draw;
+                    done5=true;
+                }
+                    
+                else{
+                  done5=true;
+                }
+            
+        }
+        if(!done6){
+            if(board.board[c][k].piece==null ){
+                availableplaces.push({i:c,j:k});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(c*80,k*80,80,80);
+        
+        
+            }
+            else
+            if(board.board[c][k].piece.couleur!=this.couleur){
+                    ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:c,j:k});
+                    ctx.fillRect(c*80,k*80,80,80);
+                    board.board[c][k].piece.draw;
+                    done6=true;
+                }
+                    
+                else{
+                  done6=true;
+                }
+            
+        }
+        if(!done7){
+            if(board.board[c][j].piece==null ){
+                availableplaces.push({i:c,j:j});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(c*80,j*80,80,80);
+        
+        
+            }
+            else
+            if(board.board[c][j].piece.couleur!=this.couleur){
+                    ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:c, j:j});
+    
+                    ctx.fillRect(c*80,j*80,80,80);
+                    board.board[c][j].piece.draw;
+                    done7=true;
+                }
+                    
+                else{
+                  done7=true;
+                }
+            
+        }
+        if(!done8){
+            if(board.board[f][k].piece==null ){
+                availableplaces.push({i:f,j:k});
+                ctx.fillStyle="#3CAEA3"
+                ctx.fillRect(f*80,k*80,80,80);
+        
+        
+            }
+            else
+            if(board.board[f][k].piece.couleur!=this.couleur){
+                    ctx.fillStyle="#cc1100"
+                    piecestoeat.push({i:f, j:k});
+    
+                    ctx.fillRect(f*80,k*80,80,80);
+                    board.board[f][k].piece.draw;
+                    done8=true;
+                }
+                    
+                else{
+                  done8=true;
+                }
+            
+        }
+        
+    
+    }
+} 
+        
     
 } 
 class Bishop extends Piece{
     constructor(nom,image,couleur,x,y){
       super(nom,image,couleur,x,y);
     }
+detectmoves(board){
+    
+    let availableplaces=[null]
+    let piecestoeat=[]
+    let i=Math.floor(this.x/80);
+    let j=Math.floor(this.y/80);
+    let k=j;
+    let f=i;
+    let c=i;
+
+    let done5=false;
+    let done6=false;
+    let done7=false;
+    let done8=false;
+while(!done5 || !done6 || !done7 || !done8){
+    j=j+1;
+    k=k-1;
+    f=f+1;
+    c=c-1;
+    if(j>=8){
+        done5=true;
+    }
+    if(k<=-1){
+        done6=true;
+    }
+    if(f>=8){
+        done7=true;
+    }
+    if(c<=-1){
+        done8=true;
+    }
+    if(!done5){
+        if(board.board[f][j].piece==null ){
+            availableplaces.push({i:f, j:j});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(f*80,j*80,80,80);
+    
+    
+        }
+        else
+        if(board.board[f][j].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:f, j:j});
+
+                ctx.fillRect(f*80,j*80,80,80);
+                board.board[f][j].piece.draw;
+                done5=true;
+            }
+                
+            else{
+              done5=true;
+            }
+        
+    }
+    if(!done6){
+        if(board.board[c][k].piece==null ){
+            availableplaces.push({i:c,j:k});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(c*80,k*80,80,80);
+    
+    
+        }
+        else
+        if(board.board[c][k].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:c,j:k});
+                ctx.fillRect(c*80,k*80,80,80);
+                board.board[c][k].piece.draw;
+                done6=true;
+            }
+                
+            else{
+              done6=true;
+            }
+        
+    }
+    if(!done7){
+        if(board.board[c][j].piece==null ){
+            availableplaces.push({i:c,j:j});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(c*80,j*80,80,80);
+    
+    
+        }
+        else
+        if(board.board[c][j].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:c, j:j});
+
+                ctx.fillRect(c*80,j*80,80,80);
+                board.board[c][j].piece.draw;
+                done7=true;
+            }
+                
+            else{
+              done7=true;
+            }
+        
+    }
+    if(!done8){
+        if(board.board[f][k].piece==null ){
+            availableplaces.push({i:f,j:k});
+            ctx.fillStyle="#3CAEA3"
+            ctx.fillRect(f*80,k*80,80,80);
+    
+    
+        }
+        else
+        if(board.board[f][k].piece.couleur!=this.couleur){
+                ctx.fillStyle="#cc1100"
+                piecestoeat.push({i:f, j:k});
+
+                ctx.fillRect(f*80,k*80,80,80);
+                board.board[f][k].piece.draw;
+                done8=true;
+            }
+                
+            else{
+              done8=true;
+            }
+    
+}    
+}
+}
 } 
 /*------------------------------------------------------------*/
 /*------------------------------------------------------------*/
@@ -335,7 +773,8 @@ function initialise(){
     var blackpawn7=new Pawn("blackpawn7",blackpawn,"black",480,480)
     var blackpawn8=new Pawn("blackpawn8",blackpawn,"black",560,480)
     
-    var pieces=[whitebishop1,whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,whiteking1,whitequeen1,whitebishop2,whitehorse1,whitehorse2,whiterook1,whiterook2,blackpawn1,blackpawn2,blackpawn3,blackpawn4,blackpawn5,blackpawn6,blackpawn7,blackpawn8,blackqueen1,blackking1,blackbishop1,blackbishop2,blackhorse1,blackhorse2,blackrook1,blackrook2]
+    var pieces=[whitebishop1,whitepawn1,whitepawn2,whitepawn3,whitepawn4,whitepawn5,whitepawn6,whitepawn7,whitepawn8,whiteking1,whitequeen1,whitebishop2,whitehorse1,whitehorse2,whiterook1,whiterook2,blackpawn1,blackpawn2,blackpawn3,blackpawn4,blackpawn5,blackpawn6,blackpawn7,blackpawn8,blackqueen1
+        ,blackking1,blackbishop1,blackbishop2,blackhorse1,blackhorse2,blackrook1,blackrook2];
     
 let board={
      board:[[],[],[],[],[],[],[],[]],
@@ -379,8 +818,8 @@ for(i=0;i<8;i++){
             }
 
 }
-board.board[4][4].piece=new Rook("whiterook",whiterook,"white",320,320);
-board.board[3][3].piece=new Rook("blackrook",blackrook,"black",240,240);
+board.board[5][4].piece=new Queen("whiterook",whitequeen,"white",400,320);
+board.board[3][3].piece=new Bishop("blackrook",whitebishop,"white",240,240);
 return board
 }
 
@@ -436,10 +875,13 @@ return cords;
         var board=initialise();
         board.draw()
         board.drawpiece()
-        c.addEventListener("click", function(x)
+       c.addEventListener("click", async function(x)
         {
+
             var l=getMousePosition(c, x);
             console.log(board.board[l.i][l.j].piece)
+         await (c.addEventListener("click",()=>{console.log("HAHAHA")
+        return;}));
         if(board.board[l.i][l.j].piece!=null){
             board.draw()
         
@@ -448,7 +890,9 @@ return cords;
            board.drawpiece()
            console.log(board)
         }
-        });
+      
+        return;
+        })
         
         };
 
